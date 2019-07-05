@@ -9,6 +9,7 @@ nested_array_input = [["a", "b"], ["c", "d"]]
 nested_array = ["a", "b"]
 standard_alphabet_array = Jobs.new.standard_alphabet_array
 random_generated_alphabet_array = Jobs.new.random_generated_alphabet_array
+working_example = [" ", "y", "w", "k", " ", " ", " ", "p", " ", " ", " ", "u", "c", " ", " ", " ", " ", "h", "f", "b", "t", " ", " ", " ", " ", " "]
 
 describe 'jobs' do
     it "combines two arrays" do
@@ -35,14 +36,15 @@ describe 'jobs' do
     end
 
     it "should return an error if a key == value" do
-
+        expect{Jobs.new.sort_jobs(input, same_key)}.to raise_error(SameKeyError)
     end
 
     it "should return an error if there is circular dependency" do
-
+        expect{Jobs.new.sort_jobs(input, circular_dependency)}.to raise_error(CircularError)
     end
 
     it "should return an array containing the 26 letters of the alphabet" do
-
+        array_count = Jobs.new.sort_jobs(standard_alphabet_array, working_example).count
+        expect(array_count).to eq(26)
     end
 end

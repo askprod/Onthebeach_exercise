@@ -1,14 +1,19 @@
 class SameKeyError < StandardError
-
+    def initialize(msg="Could not show result: a key depended on itself. Please try again.")
+        super(msg)
+    end
 end
 
 class CircularError < StandardError
-
+    def initialize(msg="Could not show result: there was a circular dependency. Please try again.")
+        super(msg)
+    end
 end
 
 class Jobs
     def sort_jobs(a, b)
         new_array = a.zip(b)
+        sort_array_by_priority(new_array)
     end
 
     # Generates an array from a to z
@@ -55,4 +60,39 @@ class Jobs
     def insert_before_index(array, index, value)
         array.insert(index-=1, value)
     end
+
+    def sort_array_by_priority(array)
+        sorted_array = []
+        # Enumerable that becomes a negative number if there is the same value added a couple of times, to check if there is a circular dependency.
+        check_infinite_loop = 1
+        while sorted_array.count < array.count && check_infinite_loop > -1
+                    array.each do |x|
+                        if x[0] == x[1]
+                            raise SameKeyError.new
+                        elsif check_infinite_loop == 0
+                            raise CircularError.new
+                            # Checks if there is an infinite loop to return an error.
+                        elsif x.include?(" ") && check_if_include(sorted_array, x)
+                            sorted_array.push(x)
+                            check_infinite_loop +=1
+                        elsif find_nested_index_0(sorted_array, x) && check_if_include(sorted_array, x) 
+                            insert_before_index(sorted_array, @index_zero, x)
+                            check_infinite_loop +=1
+                        elsif find_nested_index_1(sorted_array, x) && check_if_include(sorted_array, x)
+                            insert_after_index(sorted_array, @index_one, x)
+                            check_infinite_loop +=1
+                        end
+                    end
+            check_infinite_loop -= 1
+        end
+        return sorted_array
+    end
+end
+
+begin
+    puts "Result: \n #{Jobs.new.sort_jobs(Jobs.new.standard_alphabet_array, Jobs.new.random_generated_alphabet_array)}"
+    rescue SameKeyError => e
+        puts e.message
+    rescue CircularError => e
+        puts e.message
 end
