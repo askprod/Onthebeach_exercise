@@ -90,7 +90,12 @@ class Jobs
 end
 
 begin
-    puts "Result: \n #{Jobs.new.sort_jobs(Jobs.new.standard_alphabet_array, Jobs.new.random_generated_alphabet_array)}"
+    ordered_array = Jobs.new.standard_alphabet_array
+    unordered_array = Jobs.new.random_generated_alphabet_array
+    input_array = ordered_array.zip(unordered_array)
+    result_array = Jobs.new.sort_jobs(ordered_array, unordered_array)
+    puts "Input: \n  #{input_array}"
+    puts "Result: \n #{result_array}"
     rescue SameKeyError => e
         puts e.message
     rescue CircularError => e
